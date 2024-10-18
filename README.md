@@ -1,6 +1,6 @@
-# Template Buildkite Plugin [![Build status](https://badge.buildkite.com/d673030645c7f3e7e397affddd97cfe9f93a40547ed17b6dc5.svg)](https://buildkite.com/buildkite/plugins-template)
+# Sentry Release Buildkite Plugin
 
-A Buildkite plugin for something awesome
+A Buildkite plugin for creating a release in Sentry
 
 ## Options
 
@@ -8,54 +8,38 @@ These are all the options available to configure this plugin's behaviour.
 
 ### Required
 
-#### `mandatory` (string)
+#### `org` (string)
 
-A great description of what this is supposed to do.
+The Sentry organisation.
+
+#### `project` (string)
+
+The Sentry project.
 
 ### Optional
 
-#### `optional` (string)
+#### `environment` (string)
 
-Describe how the plugin behaviour changes if this option is not specified, allowed values and its default.
+The environment of the release.  
+Default: `production`
+
+#### `source-maps-artifact` (string)
+
+The name or pattern of a Buildkite artifact to download and use as source maps for the release.  
+Default: `""`
 
 ## Examples
 
-Show how your plugin is to be used
+Create a release in Sentry:
 
 ```yaml
 steps:
-  - label: "🔨 Running plugin"
-    command: "echo template plugin"
+  - label: ":sentry: Create release in Sentry"
     plugins:
-      - template#v1.0.0:
-          mandatory: "value"
+      - jradtilbrook/sentry-release#v1.0:
+          org: atlantica
+          project: website
 ```
-
-## And with other options as well
-
-If you want to change the plugin behaviour:
-
-```yaml
-steps:
-  - label: "🔨 Running plugin"
-    command: "echo template plugin with options"
-    plugins:
-      - template#v1.0.0:
-          mandatory: "value"
-          optional: "example"
-```
-
-## ⚒ Developing
-
-You can use the [bk cli](https://github.com/buildkite/cli) to run the [pipeline](.buildkite/pipeline.yml) locally:
-
-```bash
-bk local run
-```
-
-## 👩‍💻 Contributing
-
-Your policy on how to contribute to the plugin!
 
 ## 📜 License
 

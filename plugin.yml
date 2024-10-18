@@ -1,14 +1,20 @@
-name: Buildkite Plugin
-description: Exceptional functionality
-author: https://github.com/buildkite-plugins
+name: Sentry Release
+description: Create a Sentry release from a Buildkite pipeline
+author: https://github.com/jradtilbrook
 requirements:
   - bash
+  - docker
 configuration:
   properties:
-    mandatory:
+    environment:
       type: string
-    optional:
+    org:
+      type: string
+    project:
+      type: string
+    source-maps:
       type: string
   required:
-    - mandatory
+    - org
+    - project
   additionalProperties: false

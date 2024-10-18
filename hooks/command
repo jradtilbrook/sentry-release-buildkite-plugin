@@ -7,15 +7,30 @@ DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 # shellcheck source=lib/plugin.bash
 . "$DIR/../lib/plugin.bash"
 
-MANDATORY_OPTION=$(plugin_read_config MANDATORY "")
-
-if [ -z "${MANDATORY_OPTION}" ]; then
-  echo 'Missing mandatory option in the plugin'
+SENTRY_ORG=$(plugin_read_config ORG "")
+if [ -z "${SENTRY_ORG}" ]; then
+  echo 'Missing "org" option in the plugin'
   exit 1
 fi
+SENTRY_PROJECT=$(plugin_read_config PROJECT "")
+if [ -z "${SENTRY_ORG}" ]; then
+  echo 'Missing "project" option in the plugin'
+  exit 1
+fi
+SENTRY_ENVIRONMENT=$(plugin_read_config ENVIRONMENT "production")
+SOURCE_MAPS=$(plugin_read_config SOURCE_MAPS "")
 
-OPTIONAL_OPTION=$(plugin_read_config OPTIONAL "default")
+echo "Creating and configuring sentry release for: $BUILDKITE_COMMIT"
+docker run --rm -v $(pwd):/work --env SENTRY_ORG --env SENTRY_PROJECT --env SENTRY_AUTH_TOKEN getsentry/sentry-cli releases new $BUILDKITE_COMMIT
+docker run --rm -v $(pwd):/work --env SENTRY_ORG --env SENTRY_PROJECT --env SENTRY_AUTH_TOKEN getsentry/sentry-cli releases set-commits --auto $BUILDKITE_COMMIT
+docker run --rm -v $(pwd):/work --env SENTRY_ORG --env SENTRY_PROJECT --env SENTRY_AUTH_TOKEN getsentry/sentry-cli releases deploys new -e $SENTRY_ENVIRONMENT -r $BUILDKITE_COMMIT
 
-echo "Running plugin with options:"
-echo " - mandatory: ${MANDATORY_OPTION}"
-echo " - optional: ${OPTIONAL_OPTION}"
+if [[ -z "${SOURCE_MAPS}" ]]; then
+  echo "Downloading source map artifacts from ${SOURCE_MAPS}"
+  mkdir "source-maps-{$BUILDKITE_BUILD_ID}"
+  buildkite-agent artifact download "$SOURCE_MAPS" "source-maps-{$BUILDKITE_BUILD_ID}"
+  echo "Uploading source maps to release"
+  docker run --rm -v $(pwd):/work --env SENTRY_ORG --env SENTRY_PROJECT --env SENTRY_AUTH_TOKEN getsentry/sentry-cli sourcemaps upload -r $BUILDKITE_COMMIT "source-maps-{$BUILDKITE_BUILD_ID}"
+fi
+
+docker run --rm -v $(pwd):/work --env SENTRY_ORG --env SENTRY_PROJECT --env SENTRY_AUTH_TOKEN getsentry/sentry-cli releases finalize $BUILDKITE_COMMIT
