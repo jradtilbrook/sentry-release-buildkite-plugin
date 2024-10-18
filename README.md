@@ -18,6 +18,10 @@ The Sentry project.
 
 ### Optional
 
+#### `auth_token_env` (string)
+
+The name of an environment variable holding the Sentry auth token. Will fall back to `SENTRY_AUTH_TOKEN`.
+
 #### `environment` (string)
 
 The environment of the release.  

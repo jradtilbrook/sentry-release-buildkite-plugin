@@ -6,6 +6,8 @@ requirements:
   - docker
 configuration:
   properties:
+    auth_token_env:
+      type: string
     environment:
       type: string
     org:
