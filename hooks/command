@@ -40,9 +40,13 @@ $SENTRY_BIN releases deploys new -e $SENTRY_ENVIRONMENT -r $BUILDKITE_COMMIT
 if [[ -n "${SOURCE_MAPS}" ]]; then
   echo "Downloading source map artifacts from ${SOURCE_MAPS}"
   mkdir "source-maps-{$BUILDKITE_BUILD_ID}"
-  buildkite-agent artifact download "$SOURCE_MAPS" "source-maps-{$BUILDKITE_BUILD_ID}"
+  buildkite-agent artifact download "$SOURCE_MAPS" "source-maps-{$BUILDKITE_BUILD_ID}/"
+  # unzip if its a tarball
+  if [[ "${SOURCE_MAPS}" = *.tar.gz ]]; then
+    tar -xzvf "source-maps-{$BUILDKITE_BUILD_ID}/$SOURCE_MAPS" -C "source-maps-{$BUILDKITE_BUILD_ID}"
+  fi
   echo "Uploading source maps to release"
-  $SENTRY_BIN sourcemaps upload -r $BUILDKITE_COMMIT "source-maps-{$BUILDKITE_BUILD_ID}"
+  $SENTRY_BIN sourcemaps upload -r $BUILDKITE_COMMIT "source-maps-{$BUILDKITE_BUILD_ID}/"
 fi
 
 echo "Finalising release: $BUILDKITE_COMMIT"
