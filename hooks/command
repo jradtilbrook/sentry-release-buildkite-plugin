@@ -24,9 +24,11 @@ SENTRY_ENVIRONMENT=$(plugin_read_config ENVIRONMENT "production")
 SOURCE_MAPS=$(plugin_read_config SOURCE_MAPS "")
 
 CLI_VERSION="2.37.0"
-echo "Downloading Sentry CLI version"
-curl -sL https://sentry.io/get-cli/ | SENTRY_CLI_VERSION=$CLI_VERSION INSTALL_DIR=/tmp/sentry sh
 SENTRY_BIN=/tmp/sentry/sentry-cli
+if [[ -x "$SENTRY_BIN" ]]; then
+  echo "Downloading Sentry CLI version"
+  curl -sL https://sentry.io/get-cli/ | SENTRY_CLI_VERSION=$CLI_VERSION INSTALL_DIR=/tmp/sentry sh
+fi
 
 echo "Creating and configuring sentry release for: $BUILDKITE_COMMIT"
 $SENTRY_BIN releases new $BUILDKITE_COMMIT
