@@ -25,10 +25,12 @@ SOURCE_MAPS=$(plugin_read_config SOURCE_MAPS "")
 
 echo "Creating and configuring sentry release for: $BUILDKITE_COMMIT"
 docker run --rm -v $(pwd):/work --env SENTRY_ORG --env SENTRY_PROJECT --env SENTRY_AUTH_TOKEN getsentry/sentry-cli releases new $BUILDKITE_COMMIT
+echo "Setting commits for: $BUILDKITE_COMMIT"
 docker run --rm -v $(pwd):/work --env SENTRY_ORG --env SENTRY_PROJECT --env SENTRY_AUTH_TOKEN getsentry/sentry-cli releases set-commits --auto $BUILDKITE_COMMIT
+echo "Adding a deploy for: $SENTRY_ENVIRONMENT"
 docker run --rm -v $(pwd):/work --env SENTRY_ORG --env SENTRY_PROJECT --env SENTRY_AUTH_TOKEN getsentry/sentry-cli releases deploys new -e $SENTRY_ENVIRONMENT -r $BUILDKITE_COMMIT
 
-if [[ -z "${SOURCE_MAPS}" ]]; then
+if [[ -n "${SOURCE_MAPS}" ]]; then
   echo "Downloading source map artifacts from ${SOURCE_MAPS}"
   mkdir "source-maps-{$BUILDKITE_BUILD_ID}"
   buildkite-agent artifact download "$SOURCE_MAPS" "source-maps-{$BUILDKITE_BUILD_ID}"
@@ -36,4 +38,5 @@ if [[ -z "${SOURCE_MAPS}" ]]; then
   docker run --rm -v $(pwd):/work --env SENTRY_ORG --env SENTRY_PROJECT --env SENTRY_AUTH_TOKEN getsentry/sentry-cli sourcemaps upload -r $BUILDKITE_COMMIT "source-maps-{$BUILDKITE_BUILD_ID}"
 fi
 
+echo "Finalising release: $BUILDKITE_COMMIT"
 docker run --rm -v $(pwd):/work --env SENTRY_ORG --env SENTRY_PROJECT --env SENTRY_AUTH_TOKEN getsentry/sentry-cli releases finalize $BUILDKITE_COMMIT
