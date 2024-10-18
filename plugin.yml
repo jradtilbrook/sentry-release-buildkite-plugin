@@ -13,7 +13,7 @@ configuration:
       type: string
     project:
       type: string
-    source-maps:
+    source-maps-artifact:
       type: string
   required:
     - org

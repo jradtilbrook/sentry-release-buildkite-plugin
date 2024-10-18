@@ -21,7 +21,7 @@ fi
 token_env=$(plugin_read_config AUTH_TOKEN_ENV "SENTRY_AUTH_TOKEN")
 SENTRY_AUTH_TOKEN=${!token_env}
 SENTRY_ENVIRONMENT=$(plugin_read_config ENVIRONMENT "production")
-SOURCE_MAPS=$(plugin_read_config SOURCE_MAPS "")
+SOURCE_MAPS=$(plugin_read_config SOURCE_MAPS_ARTIFACT "")
 
 CLI_VERSION="2.37.0"
 SENTRY_BIN=/tmp/sentry/sentry-cli
