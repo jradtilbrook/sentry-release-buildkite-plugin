@@ -3,7 +3,6 @@ description: Create a Sentry release from a Buildkite pipeline
 author: https://github.com/jradtilbrook
 requirements:
   - bash
-  - docker
 configuration:
   properties:
     auth_token_env:
