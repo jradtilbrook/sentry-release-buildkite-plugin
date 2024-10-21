@@ -7,21 +7,21 @@ DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 # shellcheck source=lib/plugin.bash
 . "$DIR/../lib/plugin.bash"
 
-SENTRY_ORG=$(plugin_read_config ORG "")
+export SENTRY_ORG=$(plugin_read_config ORG "")
 if [ -z "${SENTRY_ORG}" ]; then
   echo 'Missing "org" option in the plugin'
   exit 1
 fi
-SENTRY_PROJECT=$(plugin_read_config PROJECT "")
+export SENTRY_PROJECT=$(plugin_read_config PROJECT "")
 if [ -z "${SENTRY_ORG}" ]; then
   echo 'Missing "project" option in the plugin'
   exit 1
 fi
 
 token_env=$(plugin_read_config AUTH_TOKEN_ENV "SENTRY_AUTH_TOKEN")
-SENTRY_AUTH_TOKEN=${!token_env}
-SENTRY_ENVIRONMENT=$(plugin_read_config ENVIRONMENT "production")
-SOURCE_MAPS=$(plugin_read_config SOURCE_MAPS_ARTIFACT "")
+export SENTRY_AUTH_TOKEN=${!token_env}
+export SENTRY_ENVIRONMENT=$(plugin_read_config ENVIRONMENT "production")
+export SOURCE_MAPS=$(plugin_read_config SOURCE_MAPS_ARTIFACT "")
 
 CLI_VERSION="2.37.0"
 SENTRY_BIN=/tmp/sentry/sentry-cli
