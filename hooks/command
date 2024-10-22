@@ -22,6 +22,7 @@ token_env=$(plugin_read_config AUTH_TOKEN_ENV "SENTRY_AUTH_TOKEN")
 export SENTRY_AUTH_TOKEN=${!token_env}
 export SENTRY_ENVIRONMENT=$(plugin_read_config ENVIRONMENT "production")
 export SOURCE_MAPS=$(plugin_read_config SOURCE_MAPS_ARTIFACT "")
+export SOURCE_MAP_URL_PREFIX=$(plugin_read_config SOURCE_MAP_URL_PREFIX "")
 
 CLI_VERSION="2.37.0"
 SENTRY_BIN=/tmp/sentry/sentry-cli
@@ -46,7 +47,11 @@ if [[ -n "${SOURCE_MAPS}" ]]; then
     tar -xzvf "source-maps-{$BUILDKITE_BUILD_ID}/$SOURCE_MAPS" -C "source-maps-{$BUILDKITE_BUILD_ID}"
   fi
   echo "Uploading source maps to release"
-  $SENTRY_BIN sourcemaps upload -r $BUILDKITE_COMMIT "source-maps-{$BUILDKITE_BUILD_ID}/"
+  if [[ -n "${SOURCE_MAP_URL_PREFIX}" ]]; then
+    $SENTRY_BIN sourcemaps upload -r $BUILDKITE_COMMIT "source-maps-{$BUILDKITE_BUILD_ID}/" --url-prefix "${SOURCE_MAP_URL_PREFIX}"
+  else
+    $SENTRY_BIN sourcemaps upload -r $BUILDKITE_COMMIT "source-maps-{$BUILDKITE_BUILD_ID}/"
+  fi
 fi
 
 echo "Finalising release: $BUILDKITE_COMMIT"

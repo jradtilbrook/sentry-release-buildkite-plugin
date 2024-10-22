@@ -27,6 +27,11 @@ The name of an environment variable holding the Sentry auth token. Will fall bac
 The environment of the release.  
 Default: `production`
 
+#### `source-map-url-prefix` (string)
+
+The URL prefix to apply when uploading source maps.
+Default: `""`
+
 #### `source-maps-artifact` (string)
 
 The name or pattern of a Buildkite artifact to download and use as source maps for the release.  
