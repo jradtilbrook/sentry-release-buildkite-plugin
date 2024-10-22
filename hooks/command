@@ -33,7 +33,7 @@ fi
 echo "Creating and configuring sentry release for: $BUILDKITE_COMMIT"
 $SENTRY_BIN releases new $BUILDKITE_COMMIT
 echo "Setting commits for: $BUILDKITE_COMMIT"
-$SENTRY_BIN releases set-commits --auto $BUILDKITE_COMMIT
+$SENTRY_BIN releases set-commits --local $BUILDKITE_COMMIT
 echo "Adding a deploy for: $SENTRY_ENVIRONMENT"
 $SENTRY_BIN releases deploys new -e $SENTRY_ENVIRONMENT -r $BUILDKITE_COMMIT
 
